@@ -1,0 +1,8 @@
+{
+  "name": "Pancha Pakshi Calculator",
+  "description": "A comprehensive Vedic astrology tool for calculating Pancha Pakshi (Five Birds) biorhythms based on birth details or manual input, featuring bulk CSV processing capabilities and Rasi sign mapping.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
