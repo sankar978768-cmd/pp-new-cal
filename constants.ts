@@ -1,56 +1,117 @@
 import { Bird, Nakshatra, City } from './types';
 
 export const BIRDS: Record<string, Bird> = {
-  vulture: { key: 'vulture', name: "Vulture", tamil: "வல்லூறு", sanskrit: "Bherunda", icon: "🦅", element: "Fire" },
-  owl: { key: 'owl', name: "Owl", tamil: "ஆந்தை", sanskrit: "Pingala", icon: "🦉", element: "Water" },
-  crow: { key: 'crow', name: "Crow", tamil: "காகம்", sanskrit: "Kaka", icon: "🐦‍⬛", element: "Earth" },
-  cock: { key: 'cock', name: "Cock", tamil: "சேவல்", sanskrit: "Kukkuta", icon: "🐓", element: "Air" },
-  peacock: { key: 'peacock', name: "Peacock", tamil: "மயில்", sanskrit: "Mayura", icon: "🦚", element: "Ether" }
+  vulture: { key: 'vulture', name: "Vulture", icon: "🦅", element: "Fire" },
+  owl: { key: 'owl', name: "Owl", icon: "🦉", element: "Water" },
+  crow: { key: 'crow', name: "Crow", icon: "🐦‍⬛", element: "Earth" },
+  cock: { key: 'cock', name: "Cock", icon: "🐓", element: "Air" },
+  peacock: { key: 'peacock', name: "Peacock", icon: "🦚", element: "Ether" }
 };
 
 export const NAKSHATRAS: Nakshatra[] = [
-  { id: 1, name: "Aswini", tamil: "அஸ்வினி", rasiIds: [1] },
-  { id: 2, name: "Bharani", tamil: "பரணி", rasiIds: [1] },
-  { id: 3, name: "Karthigai", tamil: "கார்த்திகை", rasiIds: [1, 2] },
-  { id: 4, name: "Rohini", tamil: "ரோகிணி", rasiIds: [2] },
-  { id: 5, name: "Mrigasirisham", tamil: "மிருகசீரிஷம்", rasiIds: [2, 3] },
-  { id: 6, name: "Thiruvathirai", tamil: "திருவாதிரை", rasiIds: [3] },
-  { id: 7, name: "Punarpusam", tamil: "புனர்பூசம்", rasiIds: [3, 4] },
-  { id: 8, name: "Poosam", tamil: "பூசம்", rasiIds: [4] },
-  { id: 9, name: "Ayilyam", tamil: "ஆயில்யம்", rasiIds: [4] },
-  { id: 10, name: "Makam", tamil: "மகம்", rasiIds: [5] },
-  { id: 11, name: "Pooram", tamil: "பூரம்", rasiIds: [5] },
-  { id: 12, name: "Uthiram", tamil: "உத்திரம்", rasiIds: [5, 6] },
-  { id: 13, name: "Hastham", tamil: "ஹஸ்தம் (அஸ்தம்)", rasiIds: [6] },
-  { id: 14, name: "Chithirai", tamil: "சித்திரை", rasiIds: [6, 7] },
-  { id: 15, name: "Swathi", tamil: "சுவாதி", rasiIds: [7] },
-  { id: 16, name: "Visakam", tamil: "விசாகம்", rasiIds: [7, 8] },
-  { id: 17, name: "Anusham", tamil: "அனுஷம்", rasiIds: [8] },
-  { id: 18, name: "Kettai", tamil: "கேட்டை", rasiIds: [8] },
-  { id: 19, name: "Moolam", tamil: "மூலம்", rasiIds: [9] },
-  { id: 20, name: "Pooradam", tamil: "பூராடம்", rasiIds: [9] },
-  { id: 21, name: "Uthiradam", tamil: "உத்திராடம்", rasiIds: [9, 10] },
-  { id: 22, name: "Thiruvonam", tamil: "திருவோணம்", rasiIds: [10] },
-  { id: 23, name: "Avittam", tamil: "அவிட்டம்", rasiIds: [10, 11] },
-  { id: 24, name: "Sathayam", tamil: "சதயம்", rasiIds: [11] },
-  { id: 25, name: "Poorattathi", tamil: "பூரட்டாதி", rasiIds: [11, 12] },
-  { id: 26, name: "Uthirattathi", tamil: "உத்திரட்டாதி", rasiIds: [12] },
-  { id: 27, name: "Revathi", tamil: "ரேவதி", rasiIds: [12] }
+  { id: 1, name: "Aswini", tanglish: "Aswini", rasiIds: [1] },
+  { id: 2, name: "Bharani", tanglish: "Bharani", rasiIds: [1] },
+  { id: 3, name: "Karthigai", tanglish: "Karthigai", rasiIds: [1, 2] },
+  { id: 4, name: "Rohini", tanglish: "Rohini", rasiIds: [2] },
+  { id: 5, name: "Mrigaseerisham", tanglish: "Mrigaseerisham", rasiIds: [2, 3] },
+  { id: 6, name: "Thiruvathirai", tanglish: "Thiruvathirai", rasiIds: [3] },
+  { id: 7, name: "Punarpusam", tanglish: "Punarpusam", rasiIds: [3, 4] },
+  { id: 8, name: "Poosam", tanglish: "Poosam", rasiIds: [4] },
+  { id: 9, name: "Ayilyam", tanglish: "Ayilyam", rasiIds: [4] },
+  { id: 10, name: "Makam", tanglish: "Makam", rasiIds: [5] },
+  { id: 11, name: "Pooram", tanglish: "Pooram", rasiIds: [5] },
+  { id: 12, name: "Uthiram", tanglish: "Uthiram", rasiIds: [5, 6] },
+  { id: 13, name: "Hastham", tanglish: "Hastham", rasiIds: [6] },
+  { id: 14, name: "Chithirai", tanglish: "Chithirai", rasiIds: [6, 7] },
+  { id: 15, name: "Swathi", tanglish: "Swathi", rasiIds: [7] },
+  { id: 16, name: "Visakam", tanglish: "Visakam", rasiIds: [7, 8] },
+  { id: 17, name: "Anusham", tanglish: "Anusham", rasiIds: [8] },
+  { id: 18, name: "Kettai", tanglish: "Kettai", rasiIds: [8] },
+  { id: 19, name: "Moolam", tanglish: "Moolam", rasiIds: [9] },
+  { id: 20, name: "Pooradam", tanglish: "Pooradam", rasiIds: [9] },
+  { id: 21, name: "Uthiradam", tanglish: "Uthiradam", rasiIds: [9, 10] },
+  { id: 22, name: "Thiruvonam", tanglish: "Thiruvonam", rasiIds: [10] },
+  { id: 23, name: "Avittam", tanglish: "Avittam", rasiIds: [10, 11] },
+  { id: 24, name: "Sathayam", tanglish: "Sathayam", rasiIds: [11] },
+  { id: 25, name: "Poorattathi", tanglish: "Poorattathi", rasiIds: [11, 12] },
+  { id: 26, name: "Uthirattathi", tanglish: "Uthirattathi", rasiIds: [12] },
+  { id: 27, name: "Revathi", tanglish: "Revathi", rasiIds: [12] }
 ];
 
 export const RASIS = [
-  { id: 1, name: "Mesha", tamil: "மேஷம்", symbol: "♈" },
-  { id: 2, name: "Rishaba", tamil: "ரிஷபம்", symbol: "♉" },
-  { id: 3, name: "Mithuna", tamil: "மிதுனம்", symbol: "♊" },
-  { id: 4, name: "Kataka", tamil: "கடகம்", symbol: "♋" },
-  { id: 5, name: "Simha", tamil: "சிம்மம்", symbol: "♌" },
-  { id: 6, name: "Kanya", tamil: "கன்னி", symbol: "♍" },
-  { id: 7, name: "Thula", tamil: "துலாம்", symbol: "♎" },
-  { id: 8, name: "Vrischika", tamil: "விருச்சிகம்", symbol: "♏" },
-  { id: 9, name: "Dhanus", tamil: "தனுசு", symbol: "♐" },
-  { id: 10, name: "Makara", tamil: "மகரம்", symbol: "♑" },
-  { id: 11, name: "Kumbha", tamil: "கும்பம்", symbol: "♒" },
-  { id: 12, name: "Meena", tamil: "மீனம்", symbol: "♓" }
+  { id: 1, name: "Mesham", tanglish: "Mesham", symbol: "♈" },
+  { id: 2, name: "Rishabam", tanglish: "Rishabam", symbol: "♉" },
+  { id: 3, name: "Mithunam", tanglish: "Mithunam", symbol: "♊" },
+  { id: 4, name: "Kadagam", tanglish: "Kadagam", symbol: "♋" },
+  { id: 5, name: "Simmam", tanglish: "Simmam", symbol: "♌" },
+  { id: 6, name: "Kanni", tanglish: "Kanni", symbol: "♍" },
+  { id: 7, name: "Thulam", tanglish: "Thulam", symbol: "♎" },
+  { id: 8, name: "Viruchigam", tanglish: "Viruchigam", symbol: "♏" },
+  { id: 9, name: "Dhanusu", tanglish: "Dhanusu", symbol: "♐" },
+  { id: 10, name: "Magaram", tanglish: "Magaram", symbol: "♑" },
+  { id: 11, name: "Kumbam", tanglish: "Kumbam", symbol: "♒" },
+  { id: 12, name: "Meenam", tanglish: "Meenam", symbol: "♓" }
+];
+
+export interface DayOfWeekInfo {
+  id: number; // 0 to 6
+  name: string; // English
+  rulingPlanet: string;
+}
+
+export const DAYS_OF_WEEK: DayOfWeekInfo[] = [
+  { id: 0, name: "Sunday", rulingPlanet: "Sun" },
+  { id: 1, name: "Monday", rulingPlanet: "Moon" },
+  { id: 2, name: "Tuesday", rulingPlanet: "Mars" },
+  { id: 3, name: "Wednesday", rulingPlanet: "Mercury" },
+  { id: 4, name: "Thursday", rulingPlanet: "Jupiter" },
+  { id: 5, name: "Friday", rulingPlanet: "Venus" },
+  { id: 6, name: "Saturday", rulingPlanet: "Saturn" }
+];
+
+export interface ThithiInfo {
+  id: number; // 1 to 30
+  name: string; // Tanglish: "Valarpirai Prathamai"
+  tanglish: string;
+  baseName: string;
+  paksha: 'shukla' | 'krishna';
+  pakshaTanglish: 'Valarpirai' | 'Theipirai';
+  pakshaIndex: number; // 1 to 15
+}
+
+export const THITHIS: ThithiInfo[] = [
+  // Valarpirai (Shukla Paksha 1 - 15)
+  { id: 1, name: "Valarpirai Prathamai", tanglish: "Valarpirai Prathamai", baseName: "Prathamai", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 1 },
+  { id: 2, name: "Valarpirai Thudiyai", tanglish: "Valarpirai Thudiyai", baseName: "Thudiyai", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 2 },
+  { id: 3, name: "Valarpirai Thiruthiyai", tanglish: "Valarpirai Thiruthiyai", baseName: "Thiruthiyai", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 3 },
+  { id: 4, name: "Valarpirai Chaturthi", tanglish: "Valarpirai Chaturthi", baseName: "Chaturthi", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 4 },
+  { id: 5, name: "Valarpirai Panchami", tanglish: "Valarpirai Panchami", baseName: "Panchami", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 5 },
+  { id: 6, name: "Valarpirai Sashti", tanglish: "Valarpirai Sashti", baseName: "Sashti", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 6 },
+  { id: 7, name: "Valarpirai Sapthami", tanglish: "Valarpirai Sapthami", baseName: "Sapthami", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 7 },
+  { id: 8, name: "Valarpirai Ashtami", tanglish: "Valarpirai Ashtami", baseName: "Ashtami", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 8 },
+  { id: 9, name: "Valarpirai Navami", tanglish: "Valarpirai Navami", baseName: "Navami", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 9 },
+  { id: 10, name: "Valarpirai Dasami", tanglish: "Valarpirai Dasami", baseName: "Dasami", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 10 },
+  { id: 11, name: "Valarpirai Ekadasi", tanglish: "Valarpirai Ekadasi", baseName: "Ekadasi", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 11 },
+  { id: 12, name: "Valarpirai Dwadasi", tanglish: "Valarpirai Dwadasi", baseName: "Dwadasi", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 12 },
+  { id: 13, name: "Valarpirai Thrayodhasi", tanglish: "Valarpirai Thrayodhasi", baseName: "Thrayodhasi", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 13 },
+  { id: 14, name: "Valarpirai Chaturdasi", tanglish: "Valarpirai Chaturdasi", baseName: "Chaturdasi", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 14 },
+  { id: 15, name: "Pournami", tanglish: "Pournami", baseName: "Pournami", paksha: 'shukla', pakshaTanglish: "Valarpirai", pakshaIndex: 15 },
+  // Theipirai (Krishna Paksha 16 - 30)
+  { id: 16, name: "Theipirai Prathamai", tanglish: "Theipirai Prathamai", baseName: "Prathamai", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 1 },
+  { id: 17, name: "Theipirai Thudiyai", tanglish: "Theipirai Thudiyai", baseName: "Thudiyai", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 2 },
+  { id: 18, name: "Theipirai Thiruthiyai", tanglish: "Theipirai Thiruthiyai", baseName: "Thiruthiyai", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 3 },
+  { id: 19, name: "Theipirai Chaturthi", tanglish: "Theipirai Chaturthi", baseName: "Chaturthi", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 4 },
+  { id: 20, name: "Theipirai Panchami", tanglish: "Theipirai Panchami", baseName: "Panchami", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 5 },
+  { id: 21, name: "Theipirai Sashti", tanglish: "Theipirai Sashti", baseName: "Sashti", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 6 },
+  { id: 22, name: "Theipirai Sapthami", tanglish: "Theipirai Sapthami", baseName: "Sapthami", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 7 },
+  { id: 23, name: "Theipirai Ashtami", tanglish: "Theipirai Ashtami", baseName: "Ashtami", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 8 },
+  { id: 24, name: "Theipirai Navami", tanglish: "Theipirai Navami", baseName: "Navami", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 9 },
+  { id: 25, name: "Theipirai Dasami", tanglish: "Theipirai Dasami", baseName: "Dasami", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 10 },
+  { id: 26, name: "Theipirai Ekadasi", tanglish: "Theipirai Ekadasi", baseName: "Ekadasi", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 11 },
+  { id: 27, name: "Theipirai Dwadasi", tanglish: "Theipirai Dwadasi", baseName: "Dwadasi", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 12 },
+  { id: 28, name: "Theipirai Thrayodhasi", tanglish: "Theipirai Thrayodhasi", baseName: "Thrayodhasi", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 13 },
+  { id: 29, name: "Theipirai Chaturdasi", tanglish: "Theipirai Chaturdasi", baseName: "Chaturdasi", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 14 },
+  { id: 30, name: "Amavasai", tanglish: "Amavasai", baseName: "Amavasai", paksha: 'krishna', pakshaTanglish: "Theipirai", pakshaIndex: 15 }
 ];
 
 export const CITIES: City[] = [

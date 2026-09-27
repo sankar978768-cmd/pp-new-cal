@@ -1,5 +1,5 @@
-import { BIRDS, NAKSHATRAS, RASIS } from '../constants';
-import { CalculationResult, DaySegment, Bird } from '../types';
+import { BIRDS, NAKSHATRAS, RASIS, DAYS_OF_WEEK, THITHIS, DayOfWeekInfo, ThithiInfo } from '../constants';
+import { CalculationResult, DaySegment, Bird, ThithiSegment, DayThithiAnalysis } from '../types';
 
 /**
  * Normalizes various date string formats into YYYY-MM-DD.
@@ -57,6 +57,33 @@ export const normalizeDate = (dateStr: string): string | null => {
   const iso = `${y}-${m}-${d}`;
   const testDate = new Date(iso);
   return isNaN(testDate.getTime()) ? null : iso;
+};
+
+/**
+ * Calculates Day of the Week (வாரம் / கிழமை) from date string.
+ */
+export const getDayOfWeek = (dateStr: string): DayOfWeekInfo => {
+  const normalized = normalizeDate(dateStr) || dateStr;
+  const parts = normalized.split('-');
+  if (parts.length === 3) {
+    const y = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10) - 1;
+    const d = parseInt(parts[2], 10);
+    const date = new Date(y, m, d, 12, 0, 0);
+    const dayIdx = date.getDay(); // 0 is Sunday
+    return DAYS_OF_WEEK[dayIdx] || DAYS_OF_WEEK[0];
+  }
+  return DAYS_OF_WEEK[0];
+};
+
+/**
+ * Calculates Thithi (திதி) from Moon-Sun elongation in degrees (0 - 360).
+ */
+export const getThithi = (elongationDeg: number): ThithiInfo => {
+  let norm = elongationDeg % 360;
+  if (norm < 0) norm += 360;
+  const thithiId = Math.floor(norm / 12) + 1; // 1 to 30
+  return THITHIS.find(t => t.id === thithiId) || THITHIS[0];
 };
 
 export const getBird = (nId: number, _pMode?: 'shukla' | 'krishna'): Bird => {
@@ -126,19 +153,126 @@ const AstroEngine = {
     const elongation = AstroEngine.normalize(moonSidereal - sunSidereal);
     const isShukla = elongation < 180;
 
+    const thithiObj = getThithi(elongation);
+    const dayOfWeekObj = getDayOfWeek(dateStr);
+
     return {
       nakshatraId,
       rasiId,
       paksha: isShukla ? 'shukla' : 'krishna',
       elongation: elongation.toFixed(2),
-      moonDeg: moonSidereal.toFixed(2)
+      moonDeg: moonSidereal.toFixed(2),
+      thithiId: thithiObj.id,
+      thithiName: thithiObj.name,
+      dayOfWeek: dayOfWeekObj.name
     };
   }
+};
+
+/**
+ * Calculates all Thithis occurring in a single 24-hour day,
+ * identifying the Primary (longest duration) and Secondary Thithi with transition times.
+ */
+export const getDayThithiAnalysis = (dateStr: string, tzOffset: number): DayThithiAnalysis => {
+  const normalized = normalizeDate(dateStr);
+  if (!normalized) throw new Error("Invalid Date Format");
+
+  const getThithiAtMinute = (minute: number) => {
+    const h = Math.floor(minute / 60);
+    const m = Math.floor(minute % 60);
+    const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    return AstroEngine.calculate(normalized, timeStr, tzOffset);
+  };
+
+  const rawSegments: { thithiId: number; startMins: number; endMins: number }[] = [];
+  const startData = getThithiAtMinute(0);
+  let lastThithi = startData.thithiId;
+  let segmentStartMins = 0;
+
+  // Scan every 30 minutes to capture any Thithi boundary
+  for (let t = 30; t <= 1440; t += 30) {
+    const checkTime = t === 1440 ? 1439 : t;
+    const data = getThithiAtMinute(checkTime);
+
+    if (data.thithiId !== lastThithi) {
+      let low = t - 30;
+      let high = t;
+      while (high - low > 1) {
+        const mid = Math.floor((low + high) / 2);
+        const midData = getThithiAtMinute(mid);
+        if (midData.thithiId === lastThithi) low = mid;
+        else high = mid;
+      }
+      const transitionMinute = high;
+
+      rawSegments.push({
+        thithiId: lastThithi,
+        startMins: segmentStartMins,
+        endMins: transitionMinute
+      });
+
+      segmentStartMins = transitionMinute;
+      lastThithi = data.thithiId;
+    }
+  }
+
+  rawSegments.push({
+    thithiId: lastThithi,
+    startMins: segmentStartMins,
+    endMins: 1440
+  });
+
+  const segments: ThithiSegment[] = rawSegments.map(seg => {
+    const durationMins = seg.endMins - seg.startMins;
+    const percent = ((durationMins / 1440) * 100).toFixed(0);
+    const startH = Math.floor(seg.startMins / 60).toString().padStart(2, '0');
+    const startM = Math.floor(seg.startMins % 60).toString().padStart(2, '0');
+    const endH = Math.floor(seg.endMins / 60).toString().padStart(2, '0');
+    const endM = Math.floor(seg.endMins % 60).toString().padStart(2, '0');
+    const thithi = THITHIS.find(t => t.id === seg.thithiId) || THITHIS[0];
+
+    return {
+      thithiId: seg.thithiId,
+      thithi,
+      startMins: seg.startMins,
+      endMins: seg.endMins,
+      durationMins,
+      percent,
+      startTimeStr: `${startH}:${startM}`,
+      endTimeStr: `${endH}:${endM}`
+    };
+  });
+
+  // Sort by duration descending to determine Primary (highest %) and Secondary
+  const sorted = [...segments].sort((a, b) => b.durationMins - a.durationMins);
+  const primary = sorted[0];
+  const secondary = sorted.length > 1 ? sorted[1] : undefined;
+  const hasTwoThithis = segments.length > 1;
+  const transitionTimeStr = hasTwoThithis ? segments[0].endTimeStr : undefined;
+
+  let summaryText = "";
+  if (hasTwoThithis && secondary) {
+    summaryText = `Primary: ${primary.thithi.name} (${primary.percent}%), Secondary: ${secondary.thithi.name} (${secondary.percent}%)`;
+  } else {
+    summaryText = `${primary.thithi.name} (100%)`;
+  }
+
+  return {
+    segments,
+    primary,
+    secondary,
+    hasTwoThithis,
+    transitionTimeStr,
+    summaryText
+  };
 };
 
 export const getDayAnalysis = (dateStr: string, tzOffset: number): DaySegment[] => {
   const normalized = normalizeDate(dateStr);
   if (!normalized) throw new Error("Invalid Date Format");
+
+  const dayOfWeekInfo = getDayOfWeek(normalized);
+  const thithiAnalysis = getDayThithiAnalysis(normalized, tzOffset);
 
   const segments: DaySegment[] = [];
   let lastNak: number | null = null;
@@ -176,9 +310,7 @@ export const getDayAnalysis = (dateStr: string, tzOffset: number): DaySegment[] 
         startMins: segmentStartMins,
         endMins: transitionMinute,
         nakshatraId: lastNak!,
-        rasiId: startData.rasiId, // This might be slightly off if rasi changes mid-nakshatra, but usually they align at boundaries or within.
-        // Actually, let's just use the rasi at the start of the segment for simplicity, 
-        // or better, calculate it in the map below.
+        rasiId: startData.rasiId,
         paksha: currentPaksha
       });
 
@@ -199,12 +331,20 @@ export const getDayAnalysis = (dateStr: string, tzOffset: number): DaySegment[] 
     const duration = seg.endMins - seg.startMins;
     const percent = ((duration / 1440) * 100).toFixed(0);
     const bird = getBird(seg.nakshatraId, seg.paksha);
-    const nakshatraName = NAKSHATRAS.find(n => n.id === seg.nakshatraId)?.name;
+    const nakshatraName = NAKSHATRAS.find(n => n.id === seg.nakshatraId)?.tanglish || NAKSHATRAS.find(n => n.id === seg.nakshatraId)?.name;
     
-    // Re-calculate rasi at the midpoint of the segment for better accuracy
-    const midPointData = getDataAtMinute(seg.startMins + (duration / 2));
+    // Re-calculate at midpoint of segment for exact Rasi and Thithi
+    const midPointMins = seg.startMins + (duration / 2);
+    const midPointData = getDataAtMinute(midPointMins);
     const rasi = RASIS.find(r => r.id === midPointData.rasiId);
-    const rasiName = rasi ? `${rasi.symbol} ${rasi.tamil} (${rasi.name})` : undefined;
+    const rasiName = rasi ? `${rasi.symbol} ${rasi.tanglish}` : undefined;
+
+    const thithiObj = getThithi(parseFloat(midPointData.elongation));
+
+    const startH = Math.floor(seg.startMins / 60).toString().padStart(2, '0');
+    const startM = Math.floor(seg.startMins % 60).toString().padStart(2, '0');
+    const endH = Math.floor(seg.endMins / 60).toString().padStart(2, '0');
+    const endM = Math.floor(seg.endMins % 60).toString().padStart(2, '0');
 
     return {
       ...seg,
@@ -212,7 +352,12 @@ export const getDayAnalysis = (dateStr: string, tzOffset: number): DaySegment[] 
       percent,
       bird,
       nakshatraName,
-      rasiName
+      rasiName,
+      thithiName: thithiObj.name,
+      dayOfWeek: dayOfWeekInfo.name,
+      startTimeStr: `${startH}:${startM}`,
+      endTimeStr: `${endH}:${endM}`,
+      thithiAnalysis
     };
   });
 };
